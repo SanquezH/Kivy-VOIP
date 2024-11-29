@@ -46,7 +46,7 @@ if platform == 'android':
         dst_port = 8080
         timeout = 5  # Sets WAN timeout. LAN connection max is 2 secs.
         ssl = False
-        tls_version = ""  # Enforces TLSv1.3 by default if using SSL
+        tls_version = ""  # Defaults to auto selection. TLSv1.3 and TLSv1.2 are options
         debug = False
         # Variables to adjust sound quality. Default settings recommended
         SAMPLE_RATE = 16000
