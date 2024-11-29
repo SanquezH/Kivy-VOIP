@@ -34,13 +34,11 @@ It is highly recommended to use Android Debug Bridge (ADB) to view the print sta
 • To use the Kivy VOIP functionality, you will need to create a server application and configure it to route data sent by clients.
 For testing purposes, the node VOIP server in the repository is configured to echo data back to a connected client.
 Note that any programming language could be used to create the server. Node.js was chosen due to its popularity and performance.
-Here is a basic outline of how to run the generic server application from the repository:
-
-Step 1. Download "node VOIP server.js" from the main repository.
-Step 2. If not already installed, install node.js on your operating system.
-Step 3. If not already known, discover your server's local IP address by running "ipconfig" (Windows) or "ifconfig" (Linux) in your Command Line Interface (CLI).
-Step 4. Run the following command in your CLI to run the VOIP server when desired: node "node VOIP server.js"
-It is also possible to run the "node VOIP server.js" through VS Code.
+Here is an outline of steps to run the generic server application from the repository:
+1. Download "node VOIP server.js" from the main repository.
+2. If not already installed, install node.js on your operating system.
+3. If not already known, discover your server's local IP address by running "ipconfig" (Windows) or "ifconfig" (Linux) in your Command Line Interface (CLI).
+4. Run the following command in your CLI to run the VOIP server when desired: node "node VOIP server.js". It is also possible to run the "node VOIP server.js" through VS Code.
 
 • You will also need to create a client using the voip.py module provided in the main repository.
 The main.py file in the main repository provides an example of how to utilize the voip.py module.
