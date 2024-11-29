@@ -62,4 +62,4 @@ Contributions are welcome! An IOS implementation is highly desired. Please follo
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-This project's voip.py file is licensed under the MIT License. See the [LICENSE.txt](LICENSE) file for details.
+This project's voip.py file is licensed under the MIT License. See the [LICENSE.txt](LICENSE.txt) file for details.
