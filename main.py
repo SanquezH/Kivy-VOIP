@@ -9,12 +9,12 @@ class VOIPClientApp(App):
     client = Client()
 
     # Configure connection from client to VOIP server
-    client.dst_address = "192.168.1.67"  # Set to your server's IP address. Use root domain if using SSL (loopback by default)
+    client.dst_address = "192.168.1.12"  # Set to your server's IP address. Use root domain if using SSL (loopback by default)
     client.dst_port = 8080  # Set to your server's assigned port (port 8080 by default)
     client.ssl = False  # Determines if SSL/TLS will be used (False by default)
     client.tls_version = ""  # Defaults to auto selection if empty string. TLSv1.3 and TLSv1.2 are options.
     client.client_id = "user@kivy.org"  # Supports identifying/authorizing connection (optional)
-    client.debug = True  # Enables print statements for troubleshooting purposes with adb
+    client.enable_debug()  # Enables debug statements for troubleshooting purposes with adb
     client.timeout = 3  # Sets wait time to connect to server (5 seconds is default)
     
     def build(self):
