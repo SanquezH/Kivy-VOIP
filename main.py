@@ -13,8 +13,8 @@ class VOIPClientApp(App):
     client.dst_port = 8080  # Set to your server's assigned port (port 8080 by default)
     client.ssl = False  # Determines if SSL/TLS will be used (False by default)
     client.tls_version = ""  # Defaults to auto selection if empty string. TLSv1.3 and TLSv1.2 are options.
-    client.client_id = "user@kivy.org"  # Supports identifying/authorizing connection (optional)
-    client.enable_debug()  # Enables debug statements for troubleshooting purposes with adb
+    client.client_id = "user@kivy.org"  # Supports identifying/authenticating connection (optional)
+    client.debug = True  # Enables debug statements for troubleshooting purposes with adb
     client.timeout = 3  # Sets wait time to connect to server (5 seconds is default)
     
     def build(self):
@@ -29,8 +29,9 @@ class VOIPClientApp(App):
         return self.layout
     
     def auto_end_call(self):  # Automate ending call, including if connection closes externally
+	# If client is connected and has permission, call is active
+	# Else, display an error dialog or message indicating which condition is not met
         if self.client.connected and self.client.hasPermission:
-            # If client is connected and has permission, call is active
             while self.client.active_call:  # Loop that runs until call ends
                 pass
         if not self.end_call_button.disabled:
@@ -38,7 +39,7 @@ class VOIPClientApp(App):
             self.end_call(instance)
 
     def start_call(self, instance):
-	    # Disable call button after call button is pressed
+	# Disable call button after call button is pressed
         self.call_button.disabled = True
         self.end_call_button.disabled = False
         self.client.start_call()  # Initiate the VOIP call
