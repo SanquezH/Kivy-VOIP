@@ -85,6 +85,7 @@ if platform == 'android':
             self.verifyPermission()
             if self.hasPermission:
                 self.connected = False
+                timeout = self.timeout * 1000
                 if self.debug:
                     Logger.info(f"VOIP: {self.timeout} sec(s) wait for connection")
                 try:
@@ -100,8 +101,9 @@ if platform == 'android':
                         self.socket = Socket()
                     self.socket.connect(
                         SocketTimer(self.dst_address, self.dst_port),
-                        self.timeout * 1000
+                        timeout
                     )
+                    self.socket.setSoTimeout(timeout)
                     self.data_input_stream = self.socket.getInputStream()
                     self.data_output_stream = self.socket.getOutputStream()
                     self.connected = True
