@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2024 Sanquez Heard
+Copyright (c) 2025 Sanquez Heard
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -47,10 +47,11 @@ if platform == 'android':
         ssl = False
         tls_version = ""  # Defaults to auto selection. TLSv1.3 and TLSv1.2 are options
         debug = False
-        # Variables to adjust sound quality. Default settings recommended
+        # Variables to adjust audio format and quality. Default settings recommended for iOS compatibility
         SAMPLE_RATE = 16000
         CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
         AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT
+        buffer_size = 640
         # Variables to be assigned dynamic values for VOIP services
         socket = None
         connected = False
@@ -59,7 +60,6 @@ if platform == 'android':
         data_input_stream = None
         audio_record = None
         active_call = False
-        buffer_size = 640
 
         def __init__(self):
             min_buffer_size = AudioRecord.getMinBufferSize(
@@ -218,3 +218,177 @@ if platform == 'android':
             audio_track.stop()
             if self.debug:
                 Logger.info("VOIP: Speaker live stream ended")
+
+elif platform == 'ios':
+    from pyobjus import autoclass
+    from pyobjus.dylib_manager import load_framework
+    load_framework("/System/Library/Frameworks/AVFoundation.framework")
+    load_framework("/System/Library/Frameworks/Foundation.framework")
+    load_framework("./Voip.framework")
+
+    AVAudioEngine = autoclass("AVAudioEngine")
+    AVAudioPlayerNode = autoclass("AVAudioPlayerNode")
+    AVAudioFormat = autoclass("AVAudioFormat")
+    VoipMachine = autoclass("Voip")
+    AVAudioSession = autoclass("AVAudioSession")
+    NSError = autoclass("NSError")
+
+    class Client:
+        # Variables to be configured per client
+        client_id = ""  # Used to identify/authenticate client's connection
+        dst_address = "127.0.0.1"  # Use root domain for ssl connection
+        dst_port = 8080
+        timeout = 5  # Sets WAN timeout. LAN connection max is 2 secs.
+        ssl = False
+        tls_version = ""  # Defaults to auto selection. TLSv1.3 and TLSv1.2 are options
+        debug = False
+        # Variables to adjust audio format and quality. Default settings recommended for Android compatibility
+        format = 3
+        sample_rate = 16000.0
+        channels = 1
+        interleaved = False
+        buffersize = 640
+        # Variables to be assigned dynamic values for VOIP services
+        input_node = None
+        hasPermission = False
+        connected = False
+        active_call = False
+        error = None
+        debug = False
+
+        def __init__(self):
+            self.audio_engine = AVAudioEngine.alloc().init()
+            self.player_node = AVAudioPlayerNode.alloc().init()
+            self.processor = VoipMachine.alloc().init()
+            self.processor.audioPlayerNode = self.player_node
+            self.processor.inputAudioFormat = (
+                AVAudioFormat.alloc().initWithCommonFormat_sampleRate_channels_interleaved_(
+                    1, 48000.0, 1, False
+                )
+            )
+            self.processor.outputAudioFormat = (
+                AVAudioFormat.alloc().initWithCommonFormat_sampleRate_channels_interleaved_(
+                    self.format, self.sample_rate, self.channels, self.interleaved
+                )
+            )
+            self.error = NSError.alloc().initWithDomain_code_userInfo_(
+                "org.kivy.voip", -1, None
+            )
+
+        def verify_permission(self):
+            self.hasPermission = False
+            self.session = AVAudioSession.sharedInstance()
+            record_permission_int = self.session.recordPermission
+
+            if record_permission_int == 1735552628:
+                self.hasPermission = True
+                if self.debug:
+                    Logger.info("VOIP: Microphone permission granted")
+                return
+            if record_permission_int == 1970168948:
+                self.hasPermission = self.processor.requestMicrophonePermission()
+                self.session = AVAudioSession.sharedInstance()
+                record_permission_int = self.session.recordPermission
+                if record_permission_int == 1735552628:
+                    self.hasPermission = True
+                    if self.debug:
+                        Logger.info("VOIP: Microphone permission granted")
+                    return
+            if record_permission_int == 1684369017:
+                record_permission = "Denied"
+            elif record_permission_int == 1970168948:
+                record_permission = "Undetermined"
+            else:
+                record_permission = "Unknown"
+
+            if self.debug:
+                Logger.error(
+                    f"VOIP: Error: {record_permission} permission. "
+                    "Ensure NSMicrophoneUsageDescription permission is in "
+                    "Info.plist and mic access is granted in app settings."
+                )
+
+        def configure_audio_session(self):
+            session = AVAudioSession.sharedInstance()
+            try:
+                session.setCategory_mode_options_error_(
+                    "AVAudioSessionCategoryPlayAndRecord",
+                    "AVAudioSessionModeVoiceChat",
+                    0,
+                    self.error,
+                )
+                session.setActive_error_(True, self.error)
+                if self.debug:
+                    Logger.info("VOIP: Audio session configured successfully.")
+            except Exception as e:
+                if self.debug:
+                    Logger.error(f"VOIP: Failed to configure audio session: {e}")
+
+        def start_call(self):
+            if self.debug:
+                Logger.info("VOIP: Starting call")
+            self.verify_permission()
+            if self.hasPermission:
+                self.connected = False
+                if self.debug:
+                    Logger.info(f"VOIP: {self.timeout} sec(s) wait for connection")
+                self.processor.connect_port_ssl_tlsVersion_timeout_(
+                    self.dst_address, self.dst_port, self.ssl, self.tls_version, self.timeout
+                )
+                if self.processor.connected():
+                    if self.debug:
+                        Logger.info(f"VOIP: Connected to {self.dst_address}:{self.dst_port}")
+                    self.connected = True
+                    self.active_call = True
+                    if self.client_id != "":
+                        self.processor.sendClientID_(self.client_id)
+                    self.configure_audio_session()
+                    self.start_audio_engine()
+                    threading.Thread(target=self.track_call_activity, daemon=True).start()
+                else:
+                    if self.debug:
+                        Logger.error(
+                            f"VOIP: Could not connect to {self.dst_address}:{self.dst_port}. "
+                            "Ensure server is reachable."
+                        )
+
+        def track_call_activity(self):
+            while self.processor.callActive:
+                pass
+            if self.debug:
+                Logger.info("VOIP: Audio stream ended.")
+            self.active_call = False
+
+        def start_audio_engine(self):
+            self.input_node = self.audio_engine.inputNode
+            self.audio_engine.attachNode_(self.player_node)
+            self.audio_engine.connect_to_format_(
+                self.player_node,
+                self.audio_engine.mainMixerNode,
+                self.processor.inputAudioFormat,
+            )
+            self.audio_engine.prepare()
+            try:
+                self.audio_engine.startAndReturnError_(None)
+                self.player_node.play()
+                self.processor.receiveAudioData()
+                audioFrames = int(self.buffersize / (16 / 8 * self.channels))
+                self.processor.installTapOnBus_bufferSize_(self.input_node, audioFrames)
+                if self.debug:
+                    Logger.info("VOIP: Audio engine started successfully.")
+                    Logger.info("VOIP: Streaming audio")
+            except Exception as e:
+                if self.debug:
+                    Logger.error(f"VOIP: Failed to start audio engine: {e}")
+
+        def end_call(self):
+            if self.debug:
+                Logger.info("VOIP: Ending call")
+            if self.active_call:
+                self.input_node.removeTapOnBus_(0)
+                self.audio_engine.stop()
+                self.player_node.stop()
+            if self.processor.connected():
+                self.processor.disconnect()
+            if self.debug:
+                Logger.info("VOIP: Call ended")
