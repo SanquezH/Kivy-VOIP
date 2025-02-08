@@ -45,7 +45,7 @@ Here is an outline of steps to run the generic server application from the repos
 
 ## Android
 
-1. Download main.py and place them in a folder that is solely used for this project.
+1. Download main.py and voip.py and place them in a folder that is solely used for this project.
 2. Within the start_call() function, update the dst_address and dst_port arguments in main.py to match your server's local IP address and port.
    All other arguments within the function are not required but may be assigned values as desired.
 3. Create a buildozer.spec file.
@@ -61,7 +61,8 @@ Here is an outline of steps to run the generic server application from the repos
 
 • The VoIP iOS framework only supports arm_64 (actual iPhone) devices by default. To use the simulator, you must load the simulator
 framework in the SimulatorFramework folder instead of the one provided in the main directory of this repository.
-1. Download main.py and place it in a folder that is solely used for this project.
+1. Download main.py, voip.py, and Voip.framework(or SimulatorFramework/Voip.framework for iOS simulator)
+   and place them in a folder that is solely used for this project.
 2. Within the start_call() function, update the dst_address and dst_port arguments in main.py to match your server's local IP address and port.
    All other arguments within the function are not required but may be assigned values as desired.
 3. Through kivy-ios, utilize toolchain to create a new Xcode project that references the main.py folder.
