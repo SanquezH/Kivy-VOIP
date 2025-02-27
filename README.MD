@@ -3,7 +3,7 @@
 ## Table of Contents
 
 - [Description](#description)
-- [Plyer Implmentation](#Plyer Implmentation)
+- [Plyer Implementation](#plyer-implementation)
 - [Server](#server)
 - [Android](#android)
 - [iOS](#iOS)
@@ -32,6 +32,7 @@ Plyer main branch documentation for VoIP:
 
 ```sh
 pip install git+https://github.com/kivy/plyer.git@master
+```
 
 ## Server
 
