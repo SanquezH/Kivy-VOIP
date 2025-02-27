@@ -16,7 +16,7 @@ Kivy VOIP is a simple, yet powerful framework designed for Kivy app developers t
 It simplifies the process of setting up voice communication between users, allowing developers to integrate it easily into their Kivy apps.
 The main goal of this project is to provide a seamless VOIP experience, enabling direct communication between clients through an easily configurable server.
 Caution must be exercised by the developer to prevent sending data to the wrong IP address or root domain.
-This project is currently being integrated into the [Plyer module](https://github.com/kivy/plyer/pull/823).
+This project was successfully integrated into the Plyer module! [View Pull Request Merge](https://github.com/kivy/plyer/pull/832).
 
 Key features:
 - Real-time voice communication.
