@@ -3,7 +3,7 @@
 ## Table of Contents
 
 - [Description](#description)
-- [App](#app)
+- [Plyer Implmentation](#Plyer Implmentation)
 - [Server](#server)
 - [Android](#android)
 - [iOS](#iOS)
@@ -16,21 +16,22 @@ Kivy VOIP is a simple, yet powerful framework designed for Kivy app developers t
 It simplifies the process of setting up voice communication between users, allowing developers to integrate it easily into their Kivy apps.
 The main goal of this project is to provide a seamless VOIP experience, enabling direct communication between clients through an easily configurable server.
 Caution must be exercised by the developer to prevent sending data to the wrong IP address or root domain.
-This project was successfully integrated into the Plyer module! [View Pull Request Merge](https://github.com/kivy/plyer/pull/832).
 
 Key features:
 - Real-time voice communication.
 - Easy integration with Kivy applications.
 - Supports Android and iOS platforms.
 
-## App
+## Plyer Implementation  
 
-To quickly test the functionality of the Kivy VOIP module, you may download the bug-free Kivy VOIP mobile application provided in the link(s) below.
-For your convenience, front-end input validation is included in the app, but you will need to ensure input into the module is valid for your app.
-It is highly recommended to use Android Debug Bridge (ADB) or XCode (for iPhones) to view the print statements in debug mode to understand or troubleshoot your inputs.
-[Download on Google Play](https://play.google.com/store/apps/details?id=app.cyberdefensesolutions.kivyvoip)
+This project was successfully integrated into the Plyer module!  
+[View Pull Request Merge](https://github.com/kivy/plyer/pull/832).  
 
-![Kivy VOIP Screenshot](App_Market_Screenshot.jpg)
+Plyer main branch documentation for VoIP:  
+[VoIP Example Documentation](https://github.com/kivy/plyer/tree/master/examples/voip)  
+
+```sh
+pip install git+https://github.com/kivy/plyer.git@master
 
 ## Server
 
