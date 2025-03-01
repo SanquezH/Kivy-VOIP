@@ -10,7 +10,6 @@ All VoIP-related functionality is now available directly within Plyer. Developer
 
 - [Description](#description)
 - [Plyer Implementation](#plyer-implementation)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## Description
@@ -34,14 +33,6 @@ To use the VoIP functionality, install the latest version of Plyer directly from
 ```sh
 pip install git+https://github.com/kivy/plyer.git@master
 ```
-
-## Contributing
-
-Contributions are welcome! Please follow these steps:
-1. Fork the repository.
-2. Create a new branch for your feature or bug fix.
-3. Commit your changes and push your branch.
-4. Submit a pull request.
 
 ## License
 
